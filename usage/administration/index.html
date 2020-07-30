@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>Administration | Crossfeed</title>
+
+
+
+<meta name="description" content="Crossfeed">
+
+
+
+
+
+    
+
+
+
+<link rel="stylesheet"
+  href="/assets/css/uswds-theme.css"
+  media="screen">
+
+
+    
+  </head>
+  <body class="  ">
+
+    <a class="usa-skipnav" href="#main-content">Skip to main content</a>
+
+    
+
+
+
+
+  <div class="usa-overlay"></div>
+
+  <header class="usa-header usa-header--basic" role="banner">
+
+
+  
+    <div class="usa-nav-container">
+  
+    <div class="usa-navbar">
+      <div class="usa-logo" id="header-logo">
+        <a
+          href="/"
+          title="Home">
+          
+          <em class="usa-logo__text">
+            Crossfeed
+          </em>
+        </a>
+      </div>
+      <button class="usa-menu-btn">Menu</button>
+    </div>
+
+    <nav role="navigation" class="usa-nav">
+      <div class="usa-nav__inner">
+        <button class="usa-nav__close">
+          <img src="/assets/uswds/img/close.svg" alt="close">
+        </button>
+
+        
+        
+        
+        <ul class="usa-nav__primary usa-accordion">
+          
+          <li class="usa-nav__primary-item">
+            
+              <a class=" usa-nav__link  " href="/usage/">
+                <span>User Guide</span>
+              </a>
+            
+          </li>
+          
+          <li class="usa-nav__primary-item">
+            
+              <a class=" usa-nav__link  " href="/contributing/">
+                <span>Contributing</span>
+              </a>
+            
+          </li>
+          
+        </ul>
+        
+
+        
+          
+          
+        
+
+        
+
+
+        </div>
+      </div>
+    </nav>
+  
+    </div>
+  
+  </header>
+
+
+
+
+    
+    
+
+
+    
+
+    
+
+    
+      
+      
+
+
+
+
+    
+    
+
+    
+      <div class="usa-section">
+  <div class="grid-container">
+    <div class="grid-row grid-gap flex-align-start">
+      
+      
+        <div class="usa-layout-docs__sidenav desktop:grid-col-3">
+          <nav aria-label="Secondary navigation">
+  <ul class="usa-sidenav">
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/usage/"
+         
+          >
+         Getting Started
+      </a>
+      
+    </li>
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/usage/administration/"
+          class="usa-current" 
+          >
+         Administration
+      </a>
+      
+      <ul class="usa-sidenav__sublist">
+        
+  <li>
+    <a href="#access-control" >Access control </a>
+  </li>
+
+  <li>
+    <a href="#global-admins" >Global admins </a>
+  </li>
+
+  <li>
+    <a href="#organization-admins" >Organization admins </a>
+  </li>
+
+
+      </ul>
+      
+    </li>
+    
+  </ul>
+</nav>
+
+        </div>
+      
+
+      <main class="usa-layout-docs usa-layout-docs__main usa-prose desktop:grid-col-9" id="main-content">
+        
+          <h1>Administration</h1>
+        
+        <h2 id="access-control">Access control</h2>
+
+<p>Every user in Crossfeed has one of the following user types:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>User type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Global Admin</td>
+      <td>Can invite any user, view or edit anything from all organizations</td>
+    </tr>
+    <tr>
+      <td>Global View</td>
+      <td>Can view anything from all organizations</td>
+    </tr>
+    <tr>
+      <td>Standard</td>
+      <td>Can only view / edit entities based on permissions delegated to them for each organization</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Standard users must be assigned a role for each organization that determines what permissions they have. These are the possible roles:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>User role</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Admin</td>
+      <td>Can invite / remove users, edit domains, schedule scans for their own organization</td>
+    </tr>
+    <tr>
+      <td>User</td>
+      <td>Can only view information for their own organization</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="global-admins">Global admins</h2>
+
+<p>The following functionality is only available to global admins (and global view users can view this information).</p>
+
+<h3 id="manage-organizations">Manage organizations</h3>
+
+<p>In the “Manage organizations” tab, you can create a new organization. Make sure you specify the organization’s root domains.</p>
+
+<h3 id="manage-users">Manage users</h3>
+
+<p>This tab allows you to manage users across all organizations, as well as invite a user to a new organization.</p>
+
+<h2 id="organization-admins">Organization admins</h2>
+
+<p>The following functionality is available to organization admins.</p>
+
+<h3 id="organization-settings">Organization settings</h3>
+
+<p>This tab lets an admin invite users to their organization or update their organization settings.</p>
+
+
+      </main>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+
+    
+
+
+  
+<footer class="usa-footer">
+
+  
+
+  
+    <div class="grid-container usa-footer__return-to-top">
+      <a href="#">Return to top</a>
+    </div>
+  
+
+  
+
+  
+
+</footer>
+
+
+
+
+
+    
+
+
+
+
+
+  
+    
+      <script src="/assets/uswds/js/uswds.min.js" async></script>
+    
+
+  
+    
+
+
+
+
+
+
+  </body>
+</html>

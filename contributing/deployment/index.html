@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>Deployment | Crossfeed</title>
+
+
+
+<meta name="description" content="Crossfeed">
+
+
+
+
+
+    
+
+
+
+<link rel="stylesheet"
+  href="/assets/css/uswds-theme.css"
+  media="screen">
+
+
+    
+  </head>
+  <body class="  ">
+
+    <a class="usa-skipnav" href="#main-content">Skip to main content</a>
+
+    
+
+
+
+
+  <div class="usa-overlay"></div>
+
+  <header class="usa-header usa-header--basic" role="banner">
+
+
+  
+    <div class="usa-nav-container">
+  
+    <div class="usa-navbar">
+      <div class="usa-logo" id="header-logo">
+        <a
+          href="/"
+          title="Home">
+          
+          <em class="usa-logo__text">
+            Crossfeed
+          </em>
+        </a>
+      </div>
+      <button class="usa-menu-btn">Menu</button>
+    </div>
+
+    <nav role="navigation" class="usa-nav">
+      <div class="usa-nav__inner">
+        <button class="usa-nav__close">
+          <img src="/assets/uswds/img/close.svg" alt="close">
+        </button>
+
+        
+        
+        
+        <ul class="usa-nav__primary usa-accordion">
+          
+          <li class="usa-nav__primary-item">
+            
+              <a class=" usa-nav__link  " href="/usage/">
+                <span>User Guide</span>
+              </a>
+            
+          </li>
+          
+          <li class="usa-nav__primary-item">
+            
+              <a class=" usa-nav__link  " href="/contributing/">
+                <span>Contributing</span>
+              </a>
+            
+          </li>
+          
+        </ul>
+        
+
+        
+          
+          
+        
+
+        
+
+
+        </div>
+      </div>
+    </nav>
+  
+    </div>
+  
+  </header>
+
+
+
+
+    
+    
+
+
+    
+
+    
+
+    
+      
+      
+
+
+
+
+    
+    
+
+    
+      <div class="usa-section">
+  <div class="grid-container">
+    <div class="grid-row grid-gap flex-align-start">
+      
+      
+        <div class="usa-layout-docs__sidenav desktop:grid-col-3">
+          <nav aria-label="Secondary navigation">
+  <ul class="usa-sidenav">
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/"
+         
+          >
+         Contribution Guidelines
+      </a>
+      
+    </li>
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/setup/"
+         
+          >
+         Development Setup
+      </a>
+      
+    </li>
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/architecture/"
+         
+          >
+         Architecture
+      </a>
+      
+    </li>
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/deployment/"
+          class="usa-current" 
+          >
+         Deployment
+      </a>
+      
+      <ul class="usa-sidenav__sublist">
+        
+  <li>
+    <a href="#manual-deployment" >Manual Deployment </a>
+  </li>
+
+  <li>
+    <a href="#first-time-setup" >First-time Setup </a>
+  </li>
+
+
+      </ul>
+      
+    </li>
+    
+  </ul>
+</nav>
+
+        </div>
+      
+
+      <main class="usa-layout-docs usa-layout-docs__main usa-prose desktop:grid-col-9" id="main-content">
+        
+          <h1>Deployment</h1>
+        
+        <h2 id="manual-deployment">Manual Deployment</h2>
+
+<p>Deployment is done automatically through GitHub Actions. Any code pushed to the <code class="language-plaintext highlighter-rouge">master</code> branch is automatically deployed to the Crossfeed staging site, and any code pushed to the <code class="language-plaintext highlighter-rouge">production</code> branch is automatically deployed to the production site.</p>
+
+<p>The following sections detail the manual deployment process for staging.</p>
+
+<h3 id="infrastructure">Infrastructure</h3>
+
+<p>Infrastructure is managed by Terraform. To deploy to staging, run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>infrastructure
+make init
+make plan
+make apply
+</code></pre></div></div>
+
+<h3 id="backend">Backend</h3>
+
+<p>The backend API is managed by the Serverless Framework. To deploy, run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>backend
+npx sls create_domain <span class="nt">--stage</span><span class="o">=</span>staging
+npx sls deploy <span class="nt">--stage</span><span class="o">=</span>staging
+</code></pre></div></div>
+
+<h3 id="worker">Worker</h3>
+
+<p>Deploying the worker involves building the Docker image and pushing it to ECR:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>backend
+npm run deploy-worker
+</code></pre></div></div>
+
+<h3 id="frontend">Frontend</h3>
+
+<p>Deploying the frontend involves building the React code, uploading it to an S3 bucket, then invalidating the Cloudfront cache:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>frontend
+<span class="nv">REACT_APP_API_URL</span><span class="o">=</span>https://api.staging.crossfeed.cyber.dhs.gov npm run build
+aws s3 <span class="nb">sync </span>build/ s3://staging.crossfeed.cyber.dhs.gov/ <span class="nt">--delete</span>
+aws cloudfront create-invalidation <span class="nt">--distribution-id</span> ELM2YU1N4NV9M <span class="nt">--paths</span> <span class="s2">"/index.html"</span>
+</code></pre></div></div>
+
+<h2 id="first-time-setup">First-time Setup</h2>
+
+<p>To deploy this app for the first time, you need to do a couple of things:</p>
+
+<ul>
+  <li>Set up a custom domain for the frontend and create an ACM certificate for it</li>
+  <li>Set initial SSM variables</li>
+</ul>
+
+<h3 id="set-initial-ssm-variables">Set initial SSM variables</h3>
+
+<p>First, make sure you set the following SSM variables manually through the AWS Console (replace <code class="language-plaintext highlighter-rouge">staging</code> with <code class="language-plaintext highlighter-rouge">prod</code> as needed). Make sure these variables are set as “SecureString”:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">/crossfeed/staging/DATABASE_USER</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/crossfeed/staging/DATABASE_PASSWORD</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/crossfeed/staging/APP_JWT_SECRET</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/crossfeed/staging/CENSYS_API_ID</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/crossfeed/staging/CENSYS_API_SECRET</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/crossfeed/staging/LOGIN_GOV_REDIRECT_URI</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/crossfeed/staging/LOGIN_GOV_BASE_URL</code></li>
+  <li><code class="language-plaintext highlighter-rouge">/crossfeed/staging/LOGIN_GOV_JWT_KEY</code></li>
+</ul>
+
+<p>Then, run <code class="language-plaintext highlighter-rouge">cp stage.config .env</code> and change the variables in <code class="language-plaintext highlighter-rouge">.env</code> to use a bucket you have access to to store state.</p>
+
+<p>Make sure you configure the default AWS profile using <code class="language-plaintext highlighter-rouge">aws configure</code> , or set the <code class="language-plaintext highlighter-rouge">AWS_PROFILE</code> environment variable in <code class="language-plaintext highlighter-rouge">.env</code>.</p>
+
+<p>Then run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm i <span class="nt">-g</span> dotenv-cli
+make init
+</code></pre></div></div>
+
+
+      </main>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+
+    
+
+
+  
+<footer class="usa-footer">
+
+  
+
+  
+    <div class="grid-container usa-footer__return-to-top">
+      <a href="#">Return to top</a>
+    </div>
+  
+
+  
+
+  
+
+</footer>
+
+
+
+
+
+    
+
+
+
+
+
+  
+    
+      <script src="/assets/uswds/js/uswds.min.js" async></script>
+    
+
+  
+    
+
+
+
+
+
+
+  </body>
+</html>

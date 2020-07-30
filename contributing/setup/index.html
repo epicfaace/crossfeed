@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>Development Setup | Crossfeed</title>
+
+
+
+<meta name="description" content="Crossfeed">
+
+
+
+
+
+    
+
+
+
+<link rel="stylesheet"
+  href="/assets/css/uswds-theme.css"
+  media="screen">
+
+
+    
+  </head>
+  <body class="  ">
+
+    <a class="usa-skipnav" href="#main-content">Skip to main content</a>
+
+    
+
+
+
+
+  <div class="usa-overlay"></div>
+
+  <header class="usa-header usa-header--basic" role="banner">
+
+
+  
+    <div class="usa-nav-container">
+  
+    <div class="usa-navbar">
+      <div class="usa-logo" id="header-logo">
+        <a
+          href="/"
+          title="Home">
+          
+          <em class="usa-logo__text">
+            Crossfeed
+          </em>
+        </a>
+      </div>
+      <button class="usa-menu-btn">Menu</button>
+    </div>
+
+    <nav role="navigation" class="usa-nav">
+      <div class="usa-nav__inner">
+        <button class="usa-nav__close">
+          <img src="/assets/uswds/img/close.svg" alt="close">
+        </button>
+
+        
+        
+        
+        <ul class="usa-nav__primary usa-accordion">
+          
+          <li class="usa-nav__primary-item">
+            
+              <a class=" usa-nav__link  " href="/usage/">
+                <span>User Guide</span>
+              </a>
+            
+          </li>
+          
+          <li class="usa-nav__primary-item">
+            
+              <a class=" usa-nav__link  " href="/contributing/">
+                <span>Contributing</span>
+              </a>
+            
+          </li>
+          
+        </ul>
+        
+
+        
+          
+          
+        
+
+        
+
+
+        </div>
+      </div>
+    </nav>
+  
+    </div>
+  
+  </header>
+
+
+
+
+    
+    
+
+
+    
+
+    
+
+    
+      
+      
+
+
+
+
+    
+    
+
+    
+      <div class="usa-section">
+  <div class="grid-container">
+    <div class="grid-row grid-gap flex-align-start">
+      
+      
+        <div class="usa-layout-docs__sidenav desktop:grid-col-3">
+          <nav aria-label="Secondary navigation">
+  <ul class="usa-sidenav">
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/"
+         
+          >
+         Contribution Guidelines
+      </a>
+      
+    </li>
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/setup/"
+          class="usa-current" 
+          >
+         Development Setup
+      </a>
+      
+      <ul class="usa-sidenav__sublist">
+        
+  <li>
+    <a href="#quickstart" >Quickstart </a>
+  </li>
+
+  <li>
+    <a href="#fargate-worker" >Fargate worker </a>
+  </li>
+
+  <li>
+    <a href="#documentation" >Documentation </a>
+  </li>
+
+
+      </ul>
+      
+    </li>
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/architecture/"
+         
+          >
+         Architecture
+      </a>
+      
+    </li>
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/deployment/"
+         
+          >
+         Deployment
+      </a>
+      
+    </li>
+    
+  </ul>
+</nav>
+
+        </div>
+      
+
+      <main class="usa-layout-docs usa-layout-docs__main usa-prose desktop:grid-col-9" id="main-content">
+        
+          <h1>Development Setup</h1>
+        
+        <h2 id="quickstart">Quickstart</h2>
+
+<ol>
+  <li>Copy root <code class="language-plaintext highlighter-rouge">dev.env.example</code> file to a <code class="language-plaintext highlighter-rouge">.env</code> file, and change values as desired:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">cp dev.env.example .env</code></li>
+    </ul>
+  </li>
+  <li>Build the crossfeed-worker Docker image
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">cd backend &amp;&amp; npm run build-worker</code></li>
+    </ul>
+  </li>
+  <li>Start entire environment from root using Docker Compose
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">docker-compose up --build</code></li>
+    </ul>
+  </li>
+  <li>
+    <p>Generate DB schema:</p>
+
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">docker-compose exec backend npx sls invoke local -f syncdb</code></li>
+      <li>(append <code class="language-plaintext highlighter-rouge">-d dangerouslyforce</code> to drop and recreate)</li>
+    </ul>
+  </li>
+  <li>
+    <p>Navigate to <a href="http://localhost">localhost</a> in a browser.</p>
+  </li>
+  <li>Hot reloading for source files is enabled, but after changes to non-source code files stopping and starting docker compose is required. The following are examples of changes that will require restarting the environment:
+    <ul>
+      <li>frontend or backend dependency changes</li>
+      <li>backend <code class="language-plaintext highlighter-rouge">serverless.yml</code> or <code class="language-plaintext highlighter-rouge">env.yml</code></li>
+      <li>environment variables in root <code class="language-plaintext highlighter-rouge">.env</code></li>
+    </ul>
+  </li>
+  <li>Install <a href="https://www.robinwieruch.de/how-to-use-prettier-vscode">Prettier</a> in your dev environment to format code on save.</li>
+</ol>
+
+<h3 id="running-the-scheduler-lambda-function-locally">Running the scheduler lambda function locally</h3>
+
+<p>The scheduler lambda function is set to run on an interval or in response to non-http events. To run it manually, run the following command:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">docker-compose exec scheduler npx serverless invoke local -f scheduler</code></li>
+</ul>
+
+<h3 id="running-tests">Running tests</h3>
+
+<p>To run tests, first make sure you have already started crossfeed with <code class="language-plaintext highlighter-rouge">docker-compose</code> . Then run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>backend
+npm <span class="nb">test</span>
+</code></pre></div></div>
+
+<p>To update snapshots, run <code class="language-plaintext highlighter-rouge">npm test -- -u</code>.</p>
+
+<h2 id="fargate-worker">Fargate worker</h2>
+
+<p>In order to run scans locally or work on scanning infrastructure,
+you will need to set up the Fargate worker and rebuild it periodically
+when worker code changes.</p>
+
+<h3 id="running-locally">Running locally</h3>
+
+<p>Each time you make changes to the worker code, you should run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm run build-worker
+</code></pre></div></div>
+
+<p>To run the scheduler:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose <span class="nb">exec </span>scheduler npx serverless invoke <span class="nb">local</span> <span class="nt">-f</span> scheduler
+</code></pre></div></div>
+
+<p>You can then run <code class="language-plaintext highlighter-rouge">docker ps</code> or ( <code class="language-plaintext highlighter-rouge">docker ps -a | head -n 3</code> ) to view running / stopped Docker containers,
+and check their logs with <code class="language-plaintext highlighter-rouge">docker logs [containername]</code> .</p>
+
+<h3 id="publishing">Publishing</h3>
+
+<p>Run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm run deploy-worker
+</code></pre></div></div>
+
+<p>If the <code class="language-plaintext highlighter-rouge">worker_ecs_repository_url</code> output from Terraform changes, you will need to modify <code class="language-plaintext highlighter-rouge">./src/tools/deploy-worker.sh</code>.</p>
+
+<h3 id="generating-censys-types">Generating censys types</h3>
+
+<p>To re-generate the censysIpv4 type file, run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm run codegen
+</code></pre></div></div>
+
+<h2 id="documentation">Documentation</h2>
+
+<p>The documentation files are stored in the <code class="language-plaintext highlighter-rouge">docs</code> directory and served from a Jekyll site. To work on this, you can run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose up docs
+</code></pre></div></div>
+
+<p>You can then open up [http://localhost:4000][http://localhost:4000] in your browser.</p>
+
+<p>See <a href="https://github.com/18F/uswds-jekyll">uswds-jekyll</a> for more information on theme customizations that can be done.</p>
+
+
+      </main>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+
+    
+
+
+  
+<footer class="usa-footer">
+
+  
+
+  
+    <div class="grid-container usa-footer__return-to-top">
+      <a href="#">Return to top</a>
+    </div>
+  
+
+  
+
+  
+
+</footer>
+
+
+
+
+
+    
+
+
+
+
+
+  
+    
+      <script src="/assets/uswds/js/uswds.min.js" async></script>
+    
+
+  
+    
+
+
+
+
+
+
+  </body>
+</html>

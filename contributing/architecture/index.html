@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>Architecture | Crossfeed</title>
+
+
+
+<meta name="description" content="Crossfeed">
+
+
+
+
+
+    
+
+
+
+<link rel="stylesheet"
+  href="/assets/css/uswds-theme.css"
+  media="screen">
+
+
+    
+  </head>
+  <body class="  ">
+
+    <a class="usa-skipnav" href="#main-content">Skip to main content</a>
+
+    
+
+
+
+
+  <div class="usa-overlay"></div>
+
+  <header class="usa-header usa-header--basic" role="banner">
+
+
+  
+    <div class="usa-nav-container">
+  
+    <div class="usa-navbar">
+      <div class="usa-logo" id="header-logo">
+        <a
+          href="/"
+          title="Home">
+          
+          <em class="usa-logo__text">
+            Crossfeed
+          </em>
+        </a>
+      </div>
+      <button class="usa-menu-btn">Menu</button>
+    </div>
+
+    <nav role="navigation" class="usa-nav">
+      <div class="usa-nav__inner">
+        <button class="usa-nav__close">
+          <img src="/assets/uswds/img/close.svg" alt="close">
+        </button>
+
+        
+        
+        
+        <ul class="usa-nav__primary usa-accordion">
+          
+          <li class="usa-nav__primary-item">
+            
+              <a class=" usa-nav__link  " href="/usage/">
+                <span>User Guide</span>
+              </a>
+            
+          </li>
+          
+          <li class="usa-nav__primary-item">
+            
+              <a class=" usa-nav__link  " href="/contributing/">
+                <span>Contributing</span>
+              </a>
+            
+          </li>
+          
+        </ul>
+        
+
+        
+          
+          
+        
+
+        
+
+
+        </div>
+      </div>
+    </nav>
+  
+    </div>
+  
+  </header>
+
+
+
+
+    
+    
+
+
+    
+
+    
+
+    
+      
+      
+
+
+
+
+    
+    
+
+    
+      <div class="usa-section">
+  <div class="grid-container">
+    <div class="grid-row grid-gap flex-align-start">
+      
+      
+        <div class="usa-layout-docs__sidenav desktop:grid-col-3">
+          <nav aria-label="Secondary navigation">
+  <ul class="usa-sidenav">
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/"
+         
+          >
+         Contribution Guidelines
+      </a>
+      
+    </li>
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/setup/"
+         
+          >
+         Development Setup
+      </a>
+      
+    </li>
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/architecture/"
+          class="usa-current" 
+          >
+         Architecture
+      </a>
+      
+      <ul class="usa-sidenav__sublist">
+        
+  <li>
+    <a href="#overall-architecture" >Overall architecture </a>
+  </li>
+
+  <li>
+    <a href="#worker-architecture" >Worker architecture </a>
+  </li>
+
+
+      </ul>
+      
+    </li>
+    
+      
+      
+      
+    <li class="usa-sidenav__item">
+      <a href="/contributing/deployment/"
+         
+          >
+         Deployment
+      </a>
+      
+    </li>
+    
+  </ul>
+</nav>
+
+        </div>
+      
+
+      <main class="usa-layout-docs usa-layout-docs__main usa-prose desktop:grid-col-9" id="main-content">
+        
+          <h1>Architecture</h1>
+        
+        <h2 id="overall-architecture">Overall architecture</h2>
+
+<!--
+
+To modify the architecture, use [https://app.diagrams.net/](https://app.diagrams.net/) or the desktop app
+
+to open architecture.drawio.
+
+-->
+
+<p><img src="/contributing/architecture.png" alt="Architecture" /></p>
+
+<h2 id="worker-architecture">Worker architecture</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">Scan</code> model represents a scheduled scan that is run on all organizations.
+A scan can be of multiple types – for example, <code class="language-plaintext highlighter-rouge">amass</code> , or <code class="language-plaintext highlighter-rouge">findomain</code> .</p>
+
+<p>First, add an organization:</p>
+
+<p><img src="https://github.com/cisagov/crossfeed/raw/62b27371d4a33f104452967dde1a85d1946da6c8/docs/img/add%20organization.png" alt="add organization" /></p>
+
+<p>Then, add a scan:</p>
+
+<p><img src="https://github.com/cisagov/crossfeed/raw/62b27371d4a33f104452967dde1a85d1946da6c8/docs/img/add%20scan.png" alt="add scan" /></p>
+
+<h3 id="scheduling">Scheduling</h3>
+
+<p>The lambda function <code class="language-plaintext highlighter-rouge">scheduler.ts</code> goes through each organization and sees which scans
+need to be run based on their schedule and when they were last run on a particular organization.</p>
+
+<h3 id="running">Running</h3>
+
+<p>When a scan is run, a <code class="language-plaintext highlighter-rouge">ScanTask</code> model is created, which launches a Fargate task.</p>
+
+<p>All information needed for the scan (defined in the <code class="language-plaintext highlighter-rouge">CommandOptions</code> interface) is specified
+through the <code class="language-plaintext highlighter-rouge">CROSSFEED_COMMAND_OPTIONS</code> environment variable. Other secrets needed for the Fargate
+task to run are specified in the task configuration through Terraform.</p>
+
+<p>The entry point for the Fargate task is at <code class="language-plaintext highlighter-rouge">backend/src/worker.ts</code> .</p>
+
+<p><img src="https://github.com/cisagov/crossfeed/raw/62b27371d4a33f104452967dde1a85d1946da6c8/docs/img/fargate%20task.png" alt="fargate task" /></p>
+
+<h4 id="local-runs">Local runs</h4>
+
+<p>When running Crossfeed locally, each worker is launched through a Docker container instead.</p>
+
+<p>To inspect tasks that are running (and have recently finished), do <code class="language-plaintext highlighter-rouge">docker ps -a &gt; out</code> and inspect the contents of <code class="language-plaintext highlighter-rouge">out</code> :</p>
+
+<p><img src="https://github.com/cisagov/crossfeed/raw/62b27371d4a33f104452967dde1a85d1946da6c8/docs/img/docker%20ps.png" alt="docker ps" /></p>
+
+<p>Note that each Docker container is identified by organization name and scan name.</p>
+
+<p>To view the logs of a particular Docker container, you can run <code class="language-plaintext highlighter-rouge">docker logs crossfeed_worker_cisa_censys_8358453</code> .</p>
+
+<h3 id="scantask">ScanTask</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">ScanTask</code> model represents a single scan task on a single organization and stores the status
+and errors, if any, of that particular task.</p>
+
+<p>You can view the most recent Scan Tasks on the organization page:</p>
+
+<p><img src="https://github.com/cisagov/crossfeed/raw/62b27371d4a33f104452967dde1a85d1946da6c8/docs/img/scan%20tasks.png" alt="scan tasks" /></p>
+
+<h4 id="scantask-status-reference">ScanTask status reference</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">created</code> : model is created</li>
+  <li><code class="language-plaintext highlighter-rouge">requested</code> : a request to Fargate has been sent to start the task</li>
+  <li><code class="language-plaintext highlighter-rouge">started</code> : the Fargate container has started running the task</li>
+  <li><code class="language-plaintext highlighter-rouge">finished</code> : the Fargate container has finished running the task</li>
+  <li><code class="language-plaintext highlighter-rouge">failed</code> : any of the steps above have failed</li>
+</ul>
+
+<h3 id="building-docker-images">Building Docker images</h3>
+
+<p>For more information on how to build and publish the Fargate Docker images, see <code class="language-plaintext highlighter-rouge">backend/README.md</code> .</p>
+
+
+      </main>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+
+    
+
+
+  
+<footer class="usa-footer">
+
+  
+
+  
+    <div class="grid-container usa-footer__return-to-top">
+      <a href="#">Return to top</a>
+    </div>
+  
+
+  
+
+  
+
+</footer>
+
+
+
+
+
+    
+
+
+
+
+
+  
+    
+      <script src="/assets/uswds/js/uswds.min.js" async></script>
+    
+
+  
+    
+
+
+
+
+
+
+  </body>
+</html>
